@@ -148,6 +148,10 @@ func (s *Server) Run() error {
 		// ctx.Write([]byte("Your license has been emailed!"))
 	})
 
+	m.Get("/_/pricing/", func(ctx *macaron.Context) {
+		ctx.HTML(200, "pricing") // 200 is the response code.
+	})
+
 	if !s.opts.EnableSSL {
 		addr := fmt.Sprintf(":%d", s.opts.Port)
 		fmt.Println("Listening to addr", addr)
