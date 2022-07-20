@@ -100,10 +100,10 @@ func (s *Server) IssueEnterpriseLicense(info LicenseForm, extendBy time.Duration
 			return err
 		}
 
-		err = LogLicense(s.sheet, accesslog)
-		if err != nil {
-			return err
-		}
+		//err = LogLicense(s.sheet, accesslog)
+		//if err != nil {
+		//	return err
+		//}
 	}
 
 	{

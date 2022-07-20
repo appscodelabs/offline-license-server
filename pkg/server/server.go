@@ -22,9 +22,7 @@ import (
 	"crypto/x509"
 	"encoding/json"
 	"fmt"
-	"net"
 	"net/http"
-	"net/smtp"
 	"os"
 	"path"
 	"time"
@@ -53,7 +51,6 @@ import (
 	"google.golang.org/api/calendar/v3"
 	"google.golang.org/api/docs/v1"
 	"google.golang.org/api/drive/v3"
-	"google.golang.org/api/option"
 	"google.golang.org/api/sheets/v4"
 	"google.golang.org/api/youtube/v3"
 	"gopkg.in/macaron.v1"
@@ -105,83 +102,83 @@ func New(opts *Options) (*Server, error) {
 	if err != nil {
 		return nil, err
 	}
-
-	var geodb *geoip2.Reader
-	if opts.GeoCityDatabase != "" {
-		geodb, err = geoip2.Open(opts.GeoCityDatabase)
-		if err != nil {
-			return nil, err
-		}
-	}
-
-	sch, err := NewScheduler(opts.TaskDir)
-	if err != nil {
-		return nil, errors.Wrap(err, "failed to create scheduler")
-	}
-
-	client, err := gdrive.DefaultClient(opts.GoogleCredentialDir, youtube.YoutubeReadonlyScope)
-	if err != nil {
-		return nil, err
-	}
-
-	srvDrive, err := drive.NewService(context.TODO(), option.WithHTTPClient(client))
-	if err != nil {
-		return nil, fmt.Errorf("unable to retrieve Drive client: %v", err)
-	}
-
-	srvDoc, err := docs.NewService(context.TODO(), option.WithHTTPClient(client))
-	if err != nil {
-		return nil, fmt.Errorf("unable to retrieve Docs client: %v", err)
-	}
-
-	sheetsService, err := sheets.NewService(context.TODO(), option.WithHTTPClient(client))
-	if err != nil {
-		return nil, fmt.Errorf("unable to retrieve Sheets client: %v", err)
-	}
-
-	sheet, err := gdrive.NewSpreadsheet(sheetsService, opts.LicenseSpreadsheetId) // Share this sheet with the service account email
-	if err != nil {
-		return nil, err
-	}
-
-	srvCalendar, err := calendar.NewService(context.TODO(), option.WithHTTPClient(client))
-	if err != nil {
-		return nil, fmt.Errorf("unable to retrieve Calendar gc: %v", err)
-	}
-
-	srvYT, err := youtube.NewService(context.TODO(), option.WithHTTPClient(client))
-	if err != nil {
-		return nil, fmt.Errorf("unable to create YouTube client: %v", err)
-	}
-
-	smtpHost, _, err := net.SplitHostPort(opts.SMTPAddress)
-	if err != nil {
-		return nil, err
-	}
-	mg := &mailer.SMTPService{
-		Address: opts.SMTPAddress,
-		Auth:    smtp.PlainAuth("", opts.SMTPUsername, opts.SMTPPassword, smtpHost),
-	}
+	//
+	//var geodb *geoip2.Reader
+	//if opts.GeoCityDatabase != "" {
+	//	geodb, err = geoip2.Open(opts.GeoCityDatabase)
+	//	if err != nil {
+	//		return nil, err
+	//	}
+	//}
+	//
+	//sch, err := NewScheduler(opts.TaskDir)
+	//if err != nil {
+	//	return nil, errors.Wrap(err, "failed to create scheduler")
+	//}
+	//
+	//client, err := gdrive.DefaultClient(opts.GoogleCredentialDir, youtube.YoutubeReadonlyScope)
+	//if err != nil {
+	//	return nil, err
+	//}
+	//
+	//srvDrive, err := drive.NewService(context.TODO(), option.WithHTTPClient(client))
+	//if err != nil {
+	//	return nil, fmt.Errorf("unable to retrieve Drive client: %v", err)
+	//}
+	//
+	//srvDoc, err := docs.NewService(context.TODO(), option.WithHTTPClient(client))
+	//if err != nil {
+	//	return nil, fmt.Errorf("unable to retrieve Docs client: %v", err)
+	//}
+	//
+	//sheetsService, err := sheets.NewService(context.TODO(), option.WithHTTPClient(client))
+	//if err != nil {
+	//	return nil, fmt.Errorf("unable to retrieve Sheets client: %v", err)
+	//}
+	//
+	//sheet, err := gdrive.NewSpreadsheet(sheetsService, opts.LicenseSpreadsheetId) // Share this sheet with the service account email
+	//if err != nil {
+	//	return nil, err
+	//}
+	//
+	//srvCalendar, err := calendar.NewService(context.TODO(), option.WithHTTPClient(client))
+	//if err != nil {
+	//	return nil, fmt.Errorf("unable to retrieve Calendar gc: %v", err)
+	//}
+	//
+	//srvYT, err := youtube.NewService(context.TODO(), option.WithHTTPClient(client))
+	//if err != nil {
+	//	return nil, fmt.Errorf("unable to create YouTube client: %v", err)
+	//}
+	//
+	//smtpHost, _, err := net.SplitHostPort(opts.SMTPAddress)
+	//if err != nil {
+	//	return nil, err
+	//}
+	//mg := &mailer.SMTPService{
+	//	Address: opts.SMTPAddress,
+	//	Auth:    smtp.PlainAuth("", opts.SMTPUsername, opts.SMTPPassword, smtpHost),
+	//}
 	return &Server{
-		opts:             opts,
-		certs:            certs,
-		fs:               fs,
-		mg:               mg,
-		sheet:            sheet,
-		freshsales:       freshsalesclient.New(opts.freshsalesHost, opts.freshsalesAPIToken),
-		listmonk:         listmonkclient.New(opts.listmonkHost, opts.listmonkUsername, opts.listmonkPassword),
-		geodb:            geodb,
-		sch:              sch,
-		driveClient:      client,
-		srvDrive:         srvDrive,
-		srvDoc:           srvDoc,
-		srvSheets:        sheetsService,
-		srvCalendar:      srvCalendar,
-		srvYT:            srvYT,
-		zc:               zoom.NewClient(os.Getenv("ZOOM_API_KEY"), os.Getenv("ZOOM_API_SECRET")),
-		zoomAccountEmail: os.Getenv("ZOOM_ACCOUNT_EMAIL"),
-		blockedDomains:   sets.NewString(opts.BlockedDomains...),
-		blockedEmails:    sets.NewString(opts.BlockedEmails...),
+		opts:  opts,
+		certs: certs,
+		fs:    fs,
+		//mg:               mg,
+		//sheet:            sheet,
+		//freshsales:       freshsalesclient.New(opts.freshsalesHost, opts.freshsalesAPIToken),
+		//listmonk:         listmonkclient.New(opts.listmonkHost, opts.listmonkUsername, opts.listmonkPassword),
+		//geodb:            geodb,
+		//sch:              sch,
+		//driveClient:      client,
+		//srvDrive:         srvDrive,
+		//srvDoc:           srvDoc,
+		//srvSheets:        sheetsService,
+		//srvCalendar:      srvCalendar,
+		//srvYT:            srvYT,
+		//zc:               zoom.NewClient(os.Getenv("ZOOM_API_KEY"), os.Getenv("ZOOM_API_SECRET")),
+		//zoomAccountEmail: os.Getenv("ZOOM_ACCOUNT_EMAIL"),
+		//blockedDomains:   sets.NewString(opts.BlockedDomains...),
+		//blockedEmails:    sets.NewString(opts.BlockedEmails...),
 	}, nil
 }
 
