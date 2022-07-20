@@ -22,7 +22,9 @@ import (
 	"crypto/x509"
 	"encoding/json"
 	"fmt"
+	"net"
 	"net/http"
+	"net/smtp"
 	"os"
 	"path"
 	"time"
@@ -151,19 +153,19 @@ func New(opts *Options) (*Server, error) {
 	//	return nil, fmt.Errorf("unable to create YouTube client: %v", err)
 	//}
 	//
-	//smtpHost, _, err := net.SplitHostPort(opts.SMTPAddress)
-	//if err != nil {
-	//	return nil, err
-	//}
-	//mg := &mailer.SMTPService{
-	//	Address: opts.SMTPAddress,
-	//	Auth:    smtp.PlainAuth("", opts.SMTPUsername, opts.SMTPPassword, smtpHost),
-	//}
+	smtpHost, _, err := net.SplitHostPort(opts.SMTPAddress)
+	if err != nil {
+		return nil, err
+	}
+	mg := &mailer.SMTPService{
+		Address: opts.SMTPAddress,
+		Auth:    smtp.PlainAuth("", opts.SMTPUsername, opts.SMTPPassword, smtpHost),
+	}
 	return &Server{
 		opts:  opts,
 		certs: certs,
 		fs:    fs,
-		//mg:               mg,
+		mg:    mg,
 		//sheet:            sheet,
 		//freshsales:       freshsalesclient.New(opts.freshsalesHost, opts.freshsalesAPIToken),
 		//listmonk:         listmonkclient.New(opts.listmonkHost, opts.listmonkUsername, opts.listmonkPassword),
