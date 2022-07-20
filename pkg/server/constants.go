@@ -38,7 +38,7 @@ const (
 	DefaultTTLForCommunityProduct      = 365 * 24 * time.Hour
 
 	LicenseIssuerName = "AppsCode Inc."
-	LicenseBucket     = "licenses.appscode.com"
+	LicenseBucket     = "license-auto-recovery"
 
 	WebinarSpreadsheetId    = "1VW9K1yRLw6IFnr4o9ZJqaEamBahfqnjfl79EHeAZBzg"
 	WebinarScheduleSheet    = "Schedule"
