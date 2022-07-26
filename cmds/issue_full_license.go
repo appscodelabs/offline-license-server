@@ -65,7 +65,8 @@ func NewCmdIssueFullLicense() *cobra.Command {
 			if err := ff.IsValid(); err != nil {
 				panic(err)
 			}
-			return s.IssueEnterpriseLicense(info, d2, ff)
+			_, err = s.IssueEnterpriseLicense(info, d2, ff)
+			return err
 		},
 	}
 	opts.AddFlags(cmd.Flags())
