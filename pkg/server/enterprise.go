@@ -27,7 +27,7 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-func (s *Server) IssueEnterpriseLicense(info LicenseForm, extendBy time.Duration, ff FeatureFlags) ([]byte, error) {
+func (s *Server) IssueEnterpriseLicense(info LicenseForm, extendBy time.Duration, ff FeatureFlags, sendMail bool) ([]byte, error) {
 	if !IsEnterpriseProduct(info.Product) {
 		return nil, fmt.Errorf("%s is not an Enterprise product", info.Product)
 	}
@@ -106,7 +106,7 @@ func (s *Server) IssueEnterpriseLicense(info LicenseForm, extendBy time.Duration
 		//}
 	}
 
-	{
+	if sendMail {
 		// avoid sending emails for know test emails
 		if !knowTestEmails.Has(info.Email) {
 			mailer := NewEnterpriseLicenseMailer(LicenseMailData{
