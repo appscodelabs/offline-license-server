@@ -65,7 +65,7 @@ type Server struct {
 	opts *Options
 
 	certs      *certstore.CertStore
-	fs         *blobfs.BlobFS
+	fs         blobfs.Interface
 	mg         *mailer.SMTPService
 	freshsales *freshsalesclient.Client
 	listmonk   *listmonkclient.Client
